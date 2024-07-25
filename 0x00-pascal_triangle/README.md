@@ -1,0 +1,1 @@
+## contains solution to task on how implement pascal triangle
