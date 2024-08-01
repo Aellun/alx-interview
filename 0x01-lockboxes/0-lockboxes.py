@@ -1,20 +1,24 @@
 #!/usr/bin/python3
+"""Script will unlock list of lists
+    by determining if all boxes can be unlocked
+"""
+
+
 def canUnlockAll(boxes):
-    # Total number of boxes
-    n = len(boxes)
-    unlocked = set([0])
-    # Initialize the queue with the first box
-    queue = [0]
+    """This function will determine if boxes can be unlocked
+        each box is numbered sequentially from 0 to n-1
+        each boxx may contain keys to other boxes
+        The first box (boxes[0]) is unlocked
+            Args:boxes (list of lists)
+            Returns:bool: True if all boxes can be unlocked, False otherwise.
+    """
 
-    # run until there are no more boxes to process
-    while queue:
-        current_box = queue.pop(0)
-        # Iterate through the keys in the current box
-        for key in boxes[current_box]:
-            # Check if the key opens a new box within the valid range
-            if key not in unlocked and key < n:
-                unlocked.add(key)
-                queue.append(key)
-
-    # Return True if all boxes are unlocked, otherwise False
-    return len(unlocked) == n
+    keys = [0]
+    for key in keys:
+        # Iterate through each key in the current box
+        for boxKey in boxes[key]:
+            # If the key is new and within the valid range
+            if boxKey not in keys and boxKey < len(boxes):
+                keys.append(boxKey)
+    # Check if the number of unlocked boxes matches the total number of boxes
+    return len(keys) == len(boxes)
