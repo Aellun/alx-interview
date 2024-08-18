@@ -13,27 +13,7 @@
 '''
 import sys
 
-
-def print_msg(dict_sc, total_file_size):
-    '''
-    Print the statistics of the processed data:
-        - Total file size
-        - Number of occurrences for each status code
-
-    Args:
-        dict_sc (dict): Dictionary with status codes
-        as keys and counts as values.
-        total_file_size (int): The total size of all processed files.
-    '''
-    print("File size: {}".format(total_file_size))
-    for key, val in sorted(dict_sc.items()):
-        if val != 0:
-            print("{}: {}".format(key, val))
-
-
-# Initialize variables
-total_file_size = 0
-counter = 0
+# Dictionary to keep track of counts for each status code
 dict_sc = {"200": 0,
            "301": 0,
            "400": 0,
@@ -43,31 +23,44 @@ dict_sc = {"200": 0,
            "405": 0,
            "500": 0
            }
+total_file_size = 0
+counter = 0
 
 try:
+    # Read lines from standard input
     for line in sys.stdin:
-        # Split the line into components and reverse it
-        parsed_line = line.split()
-        parsed_line = parsed_line[::-1]
+        # Split the line into components based on spaces
+        line_list = line.split(" ")
 
-        if len(parsed_line) > 2:
+        # Process lines with at least 5 components
+        if len(line_list) > 4:
+            status_code = line_list[-2]
+            file_size = int(line_list[-1])
+
+            if status_code in dict_sc.keys():
+                dict_sc[status_code] += 1
+
+            total_file_size += file_size
+
             counter += 1
 
-            if counter <= 10:
-                try:
-                    file_size = int(parsed_line[0])
-                except ValueError:
-                    continue
+        # Print statistics after every 10 lines
+        if counter == 10:
+            counter = 0
+            print('File size: {}'.format(total_file_size))
 
-                status_code = parsed_line[1]
+            # Print counts for each status code,
+            # only if count is greater than zero
+            for key, value in sorted(dict_sc.items()):
+                if value != 0:
+                    print('{}: {}'.format(key, value))
 
-                if status_code in dict_sc:
-                    dict_sc[status_code] += 1
+except Exception as err:
+    pass
 
-            if counter == 10:
-                # Print statistics after every 10 lines
-                print_msg(dict_sc, total_file_size)
-                counter = 0
+# Ensure final statistics are printed upon completion or interruption
 finally:
-    # Print final statistics when processing is complete
-    print_msg(dict_sc, total_file_size)
+    print('File size: {}'.format(total_file_size))
+    for key, value in sorted(dict_sc.items()):
+        if value != 0:
+            print('{}: {}'.format(key, value))
