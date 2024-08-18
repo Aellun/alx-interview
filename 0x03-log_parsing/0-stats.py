@@ -12,6 +12,8 @@
         status codes should be printed in ascending order
 '''
 import sys
+
+
 def print_msg(dict_sc, total_file_size):
     """
     Method to print status
