@@ -45,10 +45,8 @@ def solve(n):
 def main():
     """
     The main function to handle input and start the N-Queens solving process.
-
     Where:
         - N: The size of the chessboard (N x N), and must be an integer >= 4.
-
     Handles errors:
         - Prints usage info if the wrong number of arguments is provided.
         - Prints an error if N is not an integer.
@@ -71,5 +69,5 @@ def main():
     solve(n)
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
