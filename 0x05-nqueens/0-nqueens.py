@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
 '''N Queens Puzzle Solver using a recursive generator approach'''
 import sys
 
