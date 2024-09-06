@@ -20,18 +20,10 @@ function sendRequest (characterList, index) {
   // Send request to the current character URL
   request(characterList[index], (error, response, body) => {
     if (error) {
-      console.error('Error fetching character:', error);
-    } else if (response.statusCode === 200) {
-      try {
-        // Parse and print the character's name
-        console.log(JSON.parse(body).name);
-        // Recursive call to process the next character
-        sendRequest(characterList, index + 1);
-      } catch (e) {
-        console.error('Error parsing character response:', e);
-      }
+      console.log(error);
     } else {
-      console.error(`Failed to fetch character. Status code: ${response.statusCode}`);
+      console.log(JSON.parse(body).name);
+      sendRequest(characterList, index + 1);
     }
   });
 }
