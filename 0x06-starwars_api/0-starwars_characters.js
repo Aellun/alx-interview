@@ -1,40 +1,41 @@
 #!/usr/bin/node
 
 const request = require('request');
+const API_URL = 'https://swapi-api.hbtn.io/api';
 
-// Get the Movie ID from command-line arguments
-const movieId = process.argv[2];
-const movieEndpoint = 'https://swapi-api.alx-tools.com/api/films/' + movieId;
-
-/**
- * Recursively sends requests to each character URL and prints their names.
- * @param {string[]} characterList - List of character URLs.
- * @param {number} index - Current index in the character list.
- */
-function sendRequest (characterList, index) {
-  // Base case: if index is out of bounds, stop recursion
-  if (characterList.length === index) {
-    return;
-  }
-
-  // Send request to the current character URL
-  request(characterList[index], (error, response, body) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(JSON.parse(body).name);
-      sendRequest(characterList, index + 1);
+// Check if a Movie ID is provided
+if (process.argv.length > 2) {
+  // Fetch movie details
+  request(`${API_URL}/films/${process.argv[2]}/`, (err, _, body) => {
+    if (err) {
+      console.error('Error fetching movie details:', err);
+      return;
     }
+
+    // Parse the response body to get the list of character URLs
+    const charactersURL = JSON.parse(body).characters;
+
+    // Create an array of Promises for fetching each character's details
+    const charactersName = charactersURL.map(url => new Promise((resolve, reject) => {
+      request(url, (promiseErr, __, charactersReqBody) => {
+        if (promiseErr) {
+          reject(new Error('Error fetching character: ' + promiseErr.message));
+        } else {
+          try {
+            // Parse character details and resolve with the name
+            resolve(JSON.parse(charactersReqBody).name);
+          } catch (parseErr) {
+            reject(new Error('Error parsing character response: ' + parseErr.message));
+          }
+        }
+      });
+    }));
+
+    // Wait for all character details to be fetched and print names
+    Promise.all(charactersName)
+      .then(names => console.log(names.join('\n')))
+      .catch(allErr => console.error('Error fetching some character details:', allErr));
   });
+} else {
+  console.error('Please provide a Movie ID.');
 }
-
-// Fetch movie details from the API
-request(movieEndpoint, (error, response, body) => {
-  if (error) {
-    console.log(error);
-  } else {
-    const characterList = JSON.parse(body).characters;
-
-    sendRequest(characterList, 0);
-  }
-});
