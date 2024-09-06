@@ -31,21 +31,10 @@ function sendRequest (characterList, index) {
 // Fetch movie details from the API
 request(movieEndpoint, (error, response, body) => {
   if (error) {
-    console.error('Error fetching movie details:', error);
-  } else if (response.statusCode === 200) {
-    try {
-      // Parse the movie details and extract the character list
-      const characterList = JSON.parse(body).characters;
-      if (Array.isArray(characterList)) {
-        // Start processing characters
-        sendRequest(characterList, 0);
-      } else {
-        console.error('Invalid character list format.');
-      }
-    } catch (e) {
-      console.error('Error parsing movie response:', e);
-    }
+    console.log(error);
   } else {
-    console.error(`Failed to fetch movie details. Status code: ${response.statusCode}`);
+    const characterList = JSON.parse(body).characters;
+
+    sendRequest(characterList, 0);
   }
 });
